@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "nbmg-download"
+version = "0.1.0"
+description = ""
+authors = ["Cannon Lock <clock@wisc.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+bs4 = "^0.0.1"
+requests = "^2.31.0"
+aiohttp = "^3.9.1"
+aiofiles = "^23.2.1"
+anyio = "^4.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
