@@ -1,20 +1,77 @@
-[tool.poetry]
-name = "nbmg-download"
-version = "0.1.0"
-description = ""
-authors = ["Cannon Lock <clock@wisc.edu>"]
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.9"
-bs4 = "^0.0.1"
-requests = "^2.31.0"
-aiohttp = "^3.9.1"
-aiofiles = "^23.2.1"
-anyio = "^4.2.0"
+## Project requirements (PEP 518, https://python-poetry.org/).
 
 
 [build-system]
-requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
 
+
+[tool.black]
+line-length = 96
+target-version = ["py38", "py39", "py310", "py311"]
+
+
+[tool.isort]
+line_length = 96
+profile = "black"
+
+
+[tool.mypy]
+explicit_package_bases = true
+namespace_packages = true
+
+check_untyped_defs = true
+strict_optional = true
+no_implicit_optional = true
+
+warn_no_return = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_ignores = true
+
+color_output = false
+pretty = true
+show_error_codes = true
+
+incremental = true
+sqlite_cache = true
+
+
+[tool.poetry]
+name = "nbmg_import"
+version = "0.0.1"
+description = "Scripts for importing maps from NBMG"
+license = "Apache-2.0"
+authors = [
+    "Cannon Lock <clock@wisc.edu>",
+    "Brian Aydemir <baydemir@morgridge.org>",
+]
+repository = "https://github.com/brianaydemir/criticalmaas-nbmg-import"
+packages = [{ include = "app" }]
+
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+aiofiles = "~23.2"
+aiohttp = "~3.9"
+anyio = "~4.2"
+beautifulsoup4 = "~4.12"
+requests = "~2.31"
+
+
+[tool.poetry.group.dev.dependencies]
+bandit = "~1.7"
+black = "~23.10"
+docutils = "~0.20"
+isort = "~5.12"
+mypy = "~1.6"
+pre-commit = "~3.5"
+pylint = "~3.0"
+"ruamel.yaml.cmd" = "~0.6"
+safety = "~2.3"
+
+
+[tool.pylint.messages-control]
+max-line-length = 96
+disable = "invalid-name,missing-class-docstring,missing-function-docstring"

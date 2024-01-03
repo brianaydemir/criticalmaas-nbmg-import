@@ -1,0 +1,8 @@
+## Temporary files created by vim.
+*.swp
+
+## Configuration file for pyenv.
+/.python-version
+
+## Build artifacts created by poetry.
+/dist/
