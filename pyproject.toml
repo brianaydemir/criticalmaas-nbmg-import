@@ -69,6 +69,8 @@ mypy = "~1.8"
 pre-commit = "~3.6"
 pylint = "~3.0"
 safety = "~2.3"
+types-beautifulsoup4 = "~4.12"
+types-requests = "~2.31"
 
 
 [tool.pylint.messages-control]

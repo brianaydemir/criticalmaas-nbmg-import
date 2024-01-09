@@ -6,3 +6,6 @@
 
 ## Build artifacts created by poetry.
 /dist/
+
+## Various artifacts from the map ingestion process.
+/data/

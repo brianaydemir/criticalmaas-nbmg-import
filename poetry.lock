@@ -1247,6 +1247,45 @@ files = [
 ]
 
 [[package]]
+name = "types-beautifulsoup4"
+version = "4.12.0.20240106"
+description = "Typing stubs for beautifulsoup4"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-beautifulsoup4-4.12.0.20240106.tar.gz", hash = "sha256:98d628985b71b140bd3bc22a8cb0ab603c2f2d08f20d37925965eb4a21739be8"},
+    {file = "types_beautifulsoup4-4.12.0.20240106-py3-none-any.whl", hash = "sha256:cbdd60ab8aeac737ac014431b6e921b43e84279c0405fdd25a6900bb0e71da5b"},
+]
+
+[package.dependencies]
+types-html5lib = "*"
+
+[[package]]
+name = "types-html5lib"
+version = "1.1.11.20240106"
+description = "Typing stubs for html5lib"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-html5lib-1.1.11.20240106.tar.gz", hash = "sha256:fc3a1b18eb601b3eeaf92c900bd67675c0a4fa1dd1d2a2893ebdb46923547ee9"},
+    {file = "types_html5lib-1.1.11.20240106-py3-none-any.whl", hash = "sha256:61993cb89220107481e0f1da65c388ff8cf3d8c5f6e8483c97559639a596b697"},
+]
+
+[[package]]
+name = "types-requests"
+version = "2.31.0.20240106"
+description = "Typing stubs for requests"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-requests-2.31.0.20240106.tar.gz", hash = "sha256:0e1c731c17f33618ec58e022b614a1a2ecc25f7dc86800b36ef341380402c612"},
+    {file = "types_requests-2.31.0.20240106-py3-none-any.whl", hash = "sha256:da997b3b6a72cc08d09f4dba9802fdbabc89104b35fe24ee588e674037689354"},
+]
+
+[package.dependencies]
+urllib3 = ">=2"
+
+[[package]]
 name = "typing-extensions"
 version = "4.9.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -1399,4 +1438,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9"
-content-hash = "a25c2f1235f6f78787eee6d487721e68faed5bc902d4a562ceb4c5da273d331e"
+content-hash = "309d658a339852728d2b92037fa56fece5e0512427058010360ae5fef82f014a"
