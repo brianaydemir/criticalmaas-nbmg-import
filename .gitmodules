@@ -1,3 +1,3 @@
-[submodule "map-integration"]
-	path = map-integration
-	url = git@github.com:UW-Macrostrat/map-integration.git
+[submodule "vendor/macrostrat"]
+	path = vendor/macrostrat
+	url = git@github.com:UW-Macrostrat/macrostrat.git
