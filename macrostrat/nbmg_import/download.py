@@ -12,7 +12,7 @@ import anyio
 import bs4
 import requests
 
-CONCURRENCY = 5  # how many files to download concurrently
+CONCURRENCY = 1  # how many files to download concurrently
 DOWNLOAD_DIR = pathlib.Path("tmp/download")  # where to put downloaded files
 
 
