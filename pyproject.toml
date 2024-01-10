@@ -39,7 +39,7 @@ sqlite_cache = true
 
 
 [tool.poetry]
-name = "nbmg_import"
+name = "macrostrat_nbmg_import"
 version = "0.0.1"
 description = "Scripts for importing maps from NBMG"
 license = "Apache-2.0"
@@ -48,7 +48,7 @@ authors = [
     "Brian Aydemir <baydemir@morgridge.org>",
 ]
 repository = "https://github.com/brianaydemir/criticalmaas-nbmg-import"
-packages = [{ include = "app" }]
+packages = [{ include = "macrostrat/nbmg_import" }]
 
 
 [tool.poetry.dependencies]
