@@ -8,4 +8,5 @@
 /dist/
 
 ## Various artifacts from the map ingestion process.
+/.env
 /data/
