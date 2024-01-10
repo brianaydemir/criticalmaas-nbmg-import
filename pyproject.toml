@@ -61,7 +61,7 @@ minio = "~7.2"
 requests = "~2.31"
 psycopg = {extras = ["binary"], version = "~3.1"}
 python-dotenv = "~1.0"
-"macrostrat.map_integration" = { path = "vendor/macrostrat/map-integration", develop = true }
+"macrostrat.map_integration" = { path = "vendor/cannon-map-ingestion", develop = true }
 
 
 [tool.poetry.group.dev.dependencies]
