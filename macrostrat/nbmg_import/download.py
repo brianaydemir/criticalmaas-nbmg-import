@@ -13,7 +13,7 @@ import bs4
 import requests
 
 CONCURRENCY = 5  # how many files to download concurrently
-DOWNLOAD_DIR = pathlib.Path("./data")  # where to put downloaded files
+DOWNLOAD_DIR = pathlib.Path("tmp/download")  # where to put downloaded files
 
 
 async def download_file(url: str) -> pathlib.Path:
