@@ -14,7 +14,7 @@ import psycopg
 
 from macrostrat.nbmg_import import utils
 
-INTEGRATE_DIR = pathlib.Path("./tmp/integrate")  # where to put downloaded files
+INTEGRATE_DIR = pathlib.Path("./tmp/integrate")  # where to put downloaded objects
 
 
 def get_objects_to_integrate():
@@ -63,6 +63,11 @@ def integrate_object(id_, scheme, host, bucket, key) -> None:
     with zipfile.ZipFile(filename) as zf:
         zf.extractall(path=extracted_zip_dir)
 
+    # FIXME (baydemir): Not a general way of generating source IDs
+    source_id = "baydemir_nbmg_import_4_" + filename.name.lower().split(".")[0].replace(
+        "-", "_"
+    )
+
     if shapefiles := [str(p) for p in extracted_zip_dir.glob("**/*.shp")]:
         logging.debug("Processing shape files: %s", shapefiles)
         subprocess.run(
@@ -71,7 +76,7 @@ def integrate_object(id_, scheme, host, bucket, key) -> None:
                 "run",
                 "macrostrat-maps",
                 "ingest",
-                "baydemir_nbmg_import_2",  # FIXME hard-coded name
+                source_id,
                 *shapefiles,
             ],
             stdout=sys.stdout,
