@@ -93,7 +93,7 @@ def register_file(file: Union[str, os.PathLike]) -> None:
 
 def main() -> None:
     for file in sys.argv[1:]:
-        logging.info("Processing: %s", file)
+        logging.info("Registering: %s", file)
         upload_file(file)
         register_file(file)
 
@@ -101,7 +101,7 @@ def main() -> None:
 def entrypoint() -> None:
     try:
         logging.basicConfig(
-            format="%(asctime)s ~ %(message)s",
+            format="[%(asctime)s] %(levelname)s %(module)s:%(lineno)d %(message)s",
             level=logging.DEBUG,
         )
         main()
