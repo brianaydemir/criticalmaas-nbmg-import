@@ -1,5 +1,5 @@
 """
-Download USGS geologic maps from the Nevada Bureau of Mines and Geology.
+Download objects specified by URLs.
 """
 
 import asyncio
@@ -10,11 +10,9 @@ from typing import Optional
 
 import aiohttp
 import anyio
-import bs4
-import requests
 
-CONCURRENCY = 1  # how many files to download concurrently
-DOWNLOAD_DIR = pathlib.Path("tmp/download")  # where to put downloaded files
+CONCURRENCY = 1  # how many objects to download concurrently
+DOWNLOAD_DIR = pathlib.Path("tmp/download")  # where to put downloaded objects
 
 
 async def download_object(url: str) -> Optional[pathlib.Path]:
@@ -41,20 +39,11 @@ async def download_object(url: str) -> Optional[pathlib.Path]:
     return filename
 
 
-def is_valid_url(url: str) -> bool:
-    """
-    Returns whether the given URL is one that we are interested in downloading.
-    """
-    return url.startswith("https://data.nbmg.unr.edu/Public/") and url.endswith(".zip")
-
-
 async def main() -> None:
-    url_to_scrape = "https://nbmg.unr.edu/USGS.html"
-    response = requests.get(url_to_scrape)
-    soup = bs4.BeautifulSoup(response.text, "html.parser")
-    links = soup.find_all("a")
-    urls = [link["href"] for link in links if is_valid_url(link["href"])]
-
+    """
+    Downloads the objects specified by the URLs given on the command line.
+    """
+    urls = sys.argv[1:]
     while True:
         current, urls = urls[:CONCURRENCY], urls[CONCURRENCY:]
         if not current:
