@@ -14,11 +14,13 @@ Scripts for importing maps from NBMG
 
        poetry install --sync
 
-4. Scrape NBMG's website for maps to download.
+4. Copy `.env.template` to `.env`, and set all the keys.
+
+5. Scrape NBMG's website for maps to download.
 
        poetry run python3 -m macrostrat.nbmg_import.scrape > urls.txt
 
-5. Run the download script, saving the output into a log file.
+6. Run the download script, saving the output into a log file.
 
        xargs -a urls.txt -d "\n" poetry run python3 -m macrostrat.nbmg_import.download 2>&1 | tee -a download.log
 
@@ -28,7 +30,7 @@ Scripts for importing maps from NBMG
 
    The maps downloaded from NBMG should be in `./tmp/download`.
 
-6. Run the registration script, saving the output into a log file.
+7. Run the registration script, saving the output into a log file.
 
        poetry run python3 -m macrostrat.nbmg_import.register ./tmp/download/* 2>&1 | tee -a register.log
 
@@ -36,7 +38,7 @@ Scripts for importing maps from NBMG
 
        grep -i error register.log
 
-7. Run the integration script, saving the output into a log file.
+8. Run the integration script, saving the output into a log file.
 
        poetry run python3 -m macrostrat.nbmg_import.integrate 2>&1 | tee -a integrate.log
 
