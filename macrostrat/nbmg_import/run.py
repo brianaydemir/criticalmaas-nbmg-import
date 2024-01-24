@@ -237,7 +237,7 @@ def integrate_into_macrostrat(obj: MacrostratObject, source_id_prefix: str) -> N
         #
 
         source_id_suffix = re.sub(r"\W", "_", obj.local_file.name, flags=re.ASCII)
-        source_id = source_id_prefix + source_id_suffix
+        source_id = f"{source_id_prefix}_{source_id_suffix}"
 
         logging.debug("Using %s as the source ID", source_id)
         logging.debug("Processing shape files: %s", shapefiles)

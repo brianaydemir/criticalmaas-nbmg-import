@@ -77,9 +77,10 @@ Run the following:
 
 ## Step 4: Integrate the maps
 
-Run the following:
+Run the following (replace `SOURCE_ID_PREFIX` with an appropriate value):
 
     poetry run python3 -m macrostrat.nbmg_import.run --verbose integrate \
+        SOURCE_ID_PREFIX
         --input 30-registered-maps.txt \
         --output 40-integrated-maps.txt \
         --error 99-errors.txt
