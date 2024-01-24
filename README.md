@@ -48,7 +48,7 @@ a `MacrostratObject` describing a map to ingest.
 
 Run the following:
 
-    poetry run python3 -m macrostrat.nbmg_import.download \
+    poetry run python3 -m macrostrat.nbmg_import.run download \
         --verbose \
         --input 10-scraped-maps.txt \
         --output 20-downloaded-maps.txt \
@@ -70,7 +70,7 @@ This step and the ones below all follow the same basic structure:
 
 Run the following:
 
-    poetry run python3 -m macrostrat.nbmg_import.register \
+    poetry run python3 -m macrostrat.nbmg_import.run register \
         --verbose \
         --input 20-downloaded-maps.txt \
         --output 30-registered-maps.txt \
@@ -81,7 +81,7 @@ Run the following:
 
 Run the following:
 
-    poetry run python3 -m macrostrat.nbmg_import.integrate \
+    poetry run python3 -m macrostrat.nbmg_import.run integrate \
         --verbose \
         --input 30-registered-maps.txt \
         --output 40-integrated-maps.txt \
