@@ -62,6 +62,8 @@ requests = "~2.31"
 psycopg = {extras = ["binary"], version = "~3.1"}
 python-dotenv = "~1.0"
 python-magic = "~0.4"
+"macrostrat.cli" = { path = "vendor/macrostrat/cli", develop = true }
+"macrostrat.core" = { path = "vendor/macrostrat/core", develop = true }
 "macrostrat.map_integration" = { path = "vendor/macrostrat/map-integration", develop = true }
 
 
