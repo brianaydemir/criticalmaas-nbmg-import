@@ -31,7 +31,7 @@ text files containing JSON-serialized
 
        poetry install --sync
 
-4. Copy `.env.template` to `.env`, and set all the keys.
+4. Copy [`.env.template`](.env.template) to `.env`, and set all the keys.
 
 
 ## Step 1: Scraping NBMG's website
