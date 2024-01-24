@@ -2,7 +2,24 @@
 
 Scripts for importing maps from NBMG
 
-## Quickstart
+
+## Overview of the process
+
+The import process can be divided into two phases:
+
+1. Scraping NBMG's website. This is inherently a task that cannot be
+   generalized to work across multiple map repositories.
+
+2. Using the data obtained in the previous step to populate data into
+   Macrostrat's database and object store. This task can be generalized to
+   work across multiple map repositories.
+
+The scripts in this repository generally take as input and produce as output
+text files containing JSON-serialized
+[`MacrostratObject`](macrostrat/nbmg_import/types.py)s, one object per line.
+
+
+## Step 0: Initial set up and configuration
 
 1. Install [Poetry](https://python-poetry.org/).
 
@@ -16,32 +33,56 @@ Scripts for importing maps from NBMG
 
 4. Copy `.env.template` to `.env`, and set all the keys.
 
-5. Scrape NBMG's website for maps to download.
 
-       poetry run python3 -m macrostrat.nbmg_import.scrape > urls.txt
+## Step 1: Scraping NBMG's website
 
-6. Run the download script, saving the output into a log file.
+Run the following:
 
-       xargs -a urls.txt -d "\n" poetry run python3 -m macrostrat.nbmg_import.download 2>&1 | tee -a download.log
+    poetry run python3 -m macrostrat.nbmg_import.scrape > 10-scraped-maps.txt
 
-   Check for errors.
+Each line in `00-scraped-objects.txt` should be the JSON representation of
+a `MacrostratObject` describing a map to ingest.
 
-       grep -i error download.log
 
-   The maps downloaded from NBMG should be in `./tmp/download`.
+## Step 2: Download the maps
 
-7. Run the registration script, saving the output into a log file.
+Run the following:
 
-       poetry run python3 -m macrostrat.nbmg_import.register ./tmp/download/* 2>&1 | tee -a register.log
+    poetry run python3 -m macrostrat.nbmg_import.download \
+        --verbose \
+        --input 10-scraped-maps.txt \
+        --output 20-downloaded-maps.txt \
+        --errors 99-errors.txt
 
-   Check for errors.
+This step and the ones below all follow the same basic structure:
 
-       grep -i error register.log
+* The input file is a list of `MacrostratObject`s produced by the previous
+  step.
 
-8. Run the integration script, saving the output into a log file.
+* The output file is a list of `MacrostratObject`s that were successfully
+  processed by the step.
 
-       poetry run python3 -m macrostrat.nbmg_import.integrate 2>&1 | tee -a integrate.log
+* The errors file is a list of `MacrostratObject`s that encountered errors
+  during processing.
 
-   Check for errors.
 
-       grep -i error integrate.log
+## Step 3: Register the maps
+
+Run the following:
+
+    poetry run python3 -m macrostrat.nbmg_import.register \
+        --verbose \
+        --input 20-downloaded-maps.txt \
+        --output 30-registered-maps.txt \
+        --errors 99-errors.txt
+
+
+## Step 4: Integrate the maps
+
+Run the following:
+
+    poetry run python3 -m macrostrat.nbmg_import.integrate \
+        --verbose \
+        --input 30-registered-maps.txt \
+        --output 40-integrated-maps.txt \
+        --errors 99-errors.txt

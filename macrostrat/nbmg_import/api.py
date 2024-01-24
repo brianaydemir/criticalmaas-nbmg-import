@@ -1,0 +1,174 @@
+"""
+Wrapper for Macrostrat's map ingestion API.
+"""
+
+import logging
+from typing import Optional
+
+import requests
+
+from macrostrat.nbmg_import import config
+
+
+class GenericAPI:
+    # pylint: disable=too-few-public-methods
+    """
+    Base class for a wrapper around a REST API.
+
+    All calls will be made using the credentials provided to the constructor.
+    """
+
+    def __init__(
+        self,
+        api_base_url: str,
+        basic_auth: Optional[tuple[str, str]] = None,
+    ):
+        """
+        Construct a wrapper that uses the provided credentials.
+
+        If a username and password are provided via `basic_auth`, API calls
+        will be made using Basic authentication.
+        """
+        self._api_base_url = api_base_url
+        self._basic_auth = basic_auth
+
+        self._session = requests.Session()
+
+        self._log = logging.getLogger(self.__class__.__name__)
+        self._log.addHandler(logging.NullHandler())
+
+    def _renew_session(self) -> None:
+        """
+        Hack for avoiding tracking XSRF tokens.
+        """
+        if self._session:
+            self._session.close()
+        self._session = requests.Session()
+
+    def _request(self, method: str, url: str, **kwargs) -> requests.Response:
+        """
+        Log and send an HTTP request.
+
+        Keyword arguments are passed through unmodified to the `requests`
+        library's `request` method. If the response contains an error
+        status code, the response is still returned. Other failures result
+        in an exception being raised.
+        """
+        if self._basic_auth:
+            if "auth" not in kwargs:
+                kwargs["auth"] = self._basic_auth
+
+        self._log.debug("%s %s", method.upper(), url)
+
+        try:
+            r = self._session.request(method, url, **kwargs)
+        except requests.RequestException:
+            self._log.exception("Unexpected `requests` error")
+            raise
+
+        # NOTE: Responses can include secrets, so it is not safe to log them
+        # here without sanitizing them.
+
+        try:
+            r.raise_for_status()
+        except requests.HTTPError as exn:
+            self._log.debug("HTTP Error: %s", exn)
+
+        return r
+
+    def _delete(self, route: str, **kwargs) -> requests.Response:
+        """
+        Log and send an HTTP DELETE request for the given route.
+        """
+        self._renew_session()
+        return self._request("DELETE", f"{self._api_base_url}{route}", **kwargs)
+
+    def _get(self, route: str, **kwargs) -> requests.Response:
+        """
+        Log and send an HTTP GET request for the given route.
+        """
+        return self._request("GET", f"{self._api_base_url}{route}", **kwargs)
+
+    def _head(self, route: str, **kwargs) -> requests.Response:
+        """
+        Log and send an HTTP HEAD request for the given route.
+        """
+        return self._request("HEAD", f"{self._api_base_url}{route}", **kwargs)
+
+    def _patch(self, route: str, **kwargs) -> requests.Response:
+        """
+        Log and send an HTTP PATCH request for the given route.
+        """
+        self._renew_session()
+        return self._request("PATCH", f"{self._api_base_url}{route}", **kwargs)
+
+    def _post(self, route: str, **kwargs) -> requests.Response:
+        """
+        Log and send an HTTP POST request for the given route.
+        """
+        self._renew_session()
+        return self._request("POST", f"{self._api_base_url}{route}", **kwargs)
+
+
+class IngestAPI(GenericAPI):
+    """
+    Wrapper for Macrostrat's map ingestion API.
+    """
+
+    def __init__(self, api_base_url: str, api_token: str):
+        """
+        Construct a wrapper that uses the provided API token.
+        """
+        super().__init__(api_base_url)
+
+        self._api_token = api_token
+
+    def _request(self, method: str, url: str, **kwargs) -> requests.Response:
+        """
+        Log and send an HTTP request.
+
+        Keyword arguments are passed through unmodified to the `requests`
+        library's `request` method. If the response contains an error
+        status code, the response is still returned. Other failures result
+        in an exception being raised.
+        """
+        if "headers" not in kwargs:
+            kwargs["headers"] = {}
+        if "authorization" not in kwargs["headers"]:
+            kwargs["headers"]["authorization"] = f"Bearer {self._api_token}"
+
+        return super()._request(method, url, timeout=config.TIMEOUT, **kwargs)
+
+    # ----------------------------------------------------------------------
+
+    def create_object(self, **payload):
+        r = self._post("/object", json=payload)
+        r.raise_for_status()
+        return r.json()
+
+    def get_object(self, id_: int):
+        r = self._get(f"/object/{id_}")
+        r.raise_for_status()
+        return r.json()
+
+    def update_object(self, id_: int, **payload):
+        r = self._patch(f"/object/{id_}", json=payload)
+        r.raise_for_status()
+        return r.json()
+
+    # ----------------------------------------------------------------------
+
+    def create_ingest_process(self, **payload):
+        r = self._post("/ingest-process", json=payload)
+        r.raise_for_status()
+        return r.json()
+
+    def get_ingest_process(self, id_: int):
+        r = self._get(f"/ingest-process/{id_}")
+        r.raise_for_status()
+        return r.json()
+
+    def update_ingest_process(self, id_: int, **payload):
+        r = self._patch(f"/ingest-process/{id_}", json=payload)
+        r.raise_for_status()
+        return r.json()
