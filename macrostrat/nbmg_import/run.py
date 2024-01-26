@@ -96,6 +96,22 @@ def get_macrostrat_process_id(obj: MacrostratObject) -> Optional[int]:
     return process_id
 
 
+def get_macrostrat_source_id(slug: str) -> Optional[int]:
+    """
+    Determine the source ID for the given "slug".
+    """
+    with psycopg.connect(config.DB_CONN_URL) as conn:
+        record = conn.execute(
+            """
+            SELECT source_id
+            FROM maps.sources
+            WHERE slug = %s
+            """,
+            (slug,),
+        ).fetchone()
+    return record[0] if record else None
+
+
 def is_object_completed(obj: MacrostratObject) -> bool:
     """
     Determine whether the object has been fully ingested.
@@ -200,7 +216,7 @@ def register_in_macrostrat(obj: MacrostratObject) -> None:
     logging.debug("Resulting ingest process ID: %s", new_process_id)
 
 
-def integrate_into_macrostrat(obj: MacrostratObject, source_id_prefix: str) -> None:
+def integrate_into_macrostrat(obj: MacrostratObject, slug_prefix: str) -> None:
     """
     Process the given object through Macrostrat's map ingestion pipeline.
     """
@@ -236,33 +252,53 @@ def integrate_into_macrostrat(obj: MacrostratObject, source_id_prefix: str) -> N
         # to generate a unique source ID for the ingestion scripts.
         #
 
-        source_id_suffix = re.sub(r"\W", "_", obj.local_file.name, flags=re.ASCII)
-        source_id = f"{source_id_prefix}_{source_id_suffix}".lower()
+        slug_suffix = re.sub(r"\W", "_", obj.local_file.name, flags=re.ASCII)
+        slug = f"{slug_prefix}_{slug_suffix}".lower()
 
-        logging.debug("Using %s as the source ID", source_id)
+        logging.debug("Using %s as the slug", slug)
         logging.debug("Processing shape files: %s", shapefiles)
 
         subprocess.run(
-            [
-                "macrostrat-maps",
-                "ingest",
-                source_id,
-                *shapefiles,
-            ],
+            ["macrostrat-maps", "ingest", slug, *shapefiles],
             stdout=sys.stdout,
             stderr=sys.stderr,
             check=True,
         )
         subprocess.run(
-            [
-                "macrostrat-maps",
-                "prepare-fields",
-                source_id,
-            ],
+            ["macrostrat-maps", "prepare-fields", slug],
             stdout=sys.stdout,
             stderr=sys.stderr,
             check=True,
         )
+
+        source_id = get_macrostrat_source_id(slug)
+        if not source_id:
+            raise RuntimeError("Failed to determine source_id")
+
+        logging.debug("Using %s as the source_id", source_id)
+
+        subprocess.run(
+            ["macrostrat-maps", "create-rgeom", str(source_id)],
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            check=True,
+        )
+        subprocess.run(
+            ["macrostrat-maps", "create-webgeom", str(source_id)],
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            check=True,
+        )
+        # FIXME: Do not hard-code the map scale.
+        with psycopg.connect(config.DB_CONN_URL) as conn:
+            conn.execute(
+                """
+                UPDATE maps.sources
+                SET scale = 'large'
+                WHERE source_id = %s
+                """,
+                (source_id,),
+            )
         mark_process_as_completed(process_id)
 
 
