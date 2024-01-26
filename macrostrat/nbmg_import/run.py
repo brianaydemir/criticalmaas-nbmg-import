@@ -100,6 +100,7 @@ def get_macrostrat_source_id(slug: str) -> Optional[int]:
     """
     Determine the source ID for the given "slug".
     """
+    # FIXME: Use an API endpoint for this query.
     with psycopg.connect(config.DB_CONN_URL) as conn:
         record = conn.execute(
             """
@@ -289,6 +290,7 @@ def integrate_into_macrostrat(obj: MacrostratObject, slug_prefix: str) -> None:
             stderr=sys.stderr,
             check=True,
         )
+        # FIXME: Use an API endpoint for this query.
         # FIXME: Do not hard-code the map scale.
         with psycopg.connect(config.DB_CONN_URL) as conn:
             conn.execute(
