@@ -7,7 +7,7 @@ from typing import Optional
 
 import requests
 
-from macrostrat.nbmg_import import config
+from macrostrat.criticalmaas import config
 
 
 class GenericAPI:

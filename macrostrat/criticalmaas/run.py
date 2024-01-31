@@ -21,9 +21,9 @@ import minio
 import psycopg
 import requests
 
-from macrostrat.nbmg_import import config
-from macrostrat.nbmg_import.api import IngestAPI
-from macrostrat.nbmg_import.types import MacrostratObject
+from macrostrat.criticalmaas import config
+from macrostrat.criticalmaas.api import IngestAPI
+from macrostrat.criticalmaas.types import MacrostratObject
 
 API = IngestAPI(config.API_BASE_URL, config.API_TOKEN)
 

@@ -7,8 +7,8 @@ import hashlib
 import bs4
 import requests
 
-from macrostrat.nbmg_import import config
-from macrostrat.nbmg_import.types import MacrostratObject
+from macrostrat.criticalmaas import config
+from macrostrat.criticalmaas.types import MacrostratObject
 
 
 def new_obj(origin: str) -> MacrostratObject:
