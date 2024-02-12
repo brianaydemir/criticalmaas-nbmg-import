@@ -126,19 +126,14 @@ def is_process_completed(id_: int) -> bool:
     """
     Determine whether the ingest process ID has been marked as "completed."
     """
-    return bool(API.get_ingest_process(id_)["completed_on"])
+    return API.get_ingest_process(id_)["state"] == "ingested"
 
 
 def mark_process_as_completed(id_: int, source_id: int) -> None:
     """
     Mark the ingest process ID as "completed".
     """
-    API.update_ingest_process(
-        id_,
-        state="ingested",
-        source_id=source_id,
-        completed_on=datetime.datetime.now(tz=datetime.timezone.utc).isoformat(),
-    )
+    API.update_ingest_process(id_, state="ingested", source_id=source_id)
 
 
 # --------------------------------------------------------------------------
