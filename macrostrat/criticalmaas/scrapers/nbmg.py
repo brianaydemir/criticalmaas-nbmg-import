@@ -11,7 +11,7 @@ from macrostrat.criticalmaas import config
 from macrostrat.criticalmaas.types import MacrostratObject
 
 
-def new_obj(origin: str) -> MacrostratObject:
+def new_obj(origin: str, name: str) -> MacrostratObject:
     description = {
         "website": "https://nbmg.unr.edu/USGS.html",
         "url": origin,
@@ -32,6 +32,8 @@ def new_obj(origin: str) -> MacrostratObject:
         key=f"{config.S3_PREFIX}/{basename}",
         #
         local_file=config.DOWNLOAD_DIR / basename,
+        #
+        name=name or filename,
     )
 
 
@@ -49,10 +51,10 @@ def main() -> None:
     url_to_scrape = "https://nbmg.unr.edu/USGS.html"
     resp = requests.get(url_to_scrape, timeout=config.TIMEOUT)
     soup = bs4.BeautifulSoup(resp.text, "html.parser")
-    links = soup.find_all("a")
+    links = [x for x in soup.find_all("a") if is_valid_url(x["href"])]
 
-    for url in sorted(link["href"] for link in links if is_valid_url(link["href"])):
-        print(new_obj(url))
+    for link in links:
+        print(new_obj(link["href"], link.text))
 
 
 if __name__ == "__main__":
