@@ -33,6 +33,7 @@ class MacrostratObject:
     ## Metadata about the "report" associated with this map.
     ref_title: Optional[str] = None
     ref_authors: Optional[str] = None
+    ref_year: Optional[str] = None
     ref_source: Optional[str] = None
     ref_isbn_or_doi: Optional[str] = None
 
