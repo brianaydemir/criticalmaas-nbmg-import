@@ -33,7 +33,7 @@ def new_obj(origin: str, name: str) -> MacrostratObject:
         #
         local_file=config.DOWNLOAD_DIR / basename,
         #
-        name=name or filename,
+        name=(name or filename) + ", NV",
     )
 
 
