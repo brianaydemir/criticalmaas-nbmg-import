@@ -14,7 +14,7 @@ import shutil
 import subprocess
 import sys
 import zipfile
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 import magic
 import minio
@@ -54,7 +54,7 @@ def get_macrostrat_objects(file: Optional[pathlib.Path]) -> list[MacrostratObjec
     return objs
 
 
-def get_macrostrat_object_id(obj: MacrostratObject) -> Optional[int]:
+def get_macrostrat_object_ids(obj: MacrostratObject) -> Tuple[Optional[int], Optional[int]]:
     """
     Determine the ID of the object.
     """
@@ -62,8 +62,8 @@ def get_macrostrat_object_id(obj: MacrostratObject) -> Optional[int]:
     with psycopg.connect(config.DB_CONN_URL) as conn:
         record = conn.execute(
             """
-            SELECT id
-            FROM objects
+            SELECT id, object_group_id
+            FROM storage.object
             WHERE scheme = %s
               AND host = %s
               AND bucket = %s
@@ -71,7 +71,7 @@ def get_macrostrat_object_id(obj: MacrostratObject) -> Optional[int]:
             """,
             (obj.scheme, obj.host, obj.bucket, obj.key),
         ).fetchone()
-    return record[0] if record else None
+    return record
 
 
 def get_macrostrat_process_id(obj: MacrostratObject) -> Optional[int]:
@@ -79,17 +79,18 @@ def get_macrostrat_process_id(obj: MacrostratObject) -> Optional[int]:
     Determine the ingest process ID of the object.
     """
     process_id = None
+    ids = get_macrostrat_object_ids(obj)
 
-    if object_id := get_macrostrat_object_id(obj):
+    if object_group_id := ids[1] if ids else None:
         # FIXME: Use an API endpoint for this query.
         with psycopg.connect(config.DB_CONN_URL) as conn:
             record = conn.execute(
                 """
                 SELECT id
                 FROM ingest_process
-                WHERE object_id = %s
+                WHERE object_group_id = %s
                 """,
-                (object_id,),
+                (object_group_id,),
             ).fetchone()
         process_id = record[0] if record else None
 
@@ -128,12 +129,14 @@ def is_process_completed(id_: int) -> bool:
     return bool(API.get_ingest_process(id_)["completed_on"])
 
 
-def mark_process_as_completed(id_: int) -> None:
+def mark_process_as_completed(id_: int, source_id: int) -> None:
     """
     Mark the ingest process ID as "completed".
     """
     API.update_ingest_process(
         id_,
+        state="ingested",
+        source_id=source_id,
         completed_on=datetime.datetime.now(tz=datetime.timezone.utc).isoformat(),
     )
 
@@ -182,6 +185,12 @@ def register_in_macrostrat(obj: MacrostratObject) -> None:
             hasher.update(data)
     sha256_hash = hasher.hexdigest()
 
+    # Create the "ingest process".
+
+    response = API.create_ingest_process()
+    logging.debug("Resulting ingest process ID: %s", response["id"])
+    object_group_id = response["object_group_id"]
+
     # Create the entry in the `objects` table.
 
     payload = {
@@ -192,29 +201,18 @@ def register_in_macrostrat(obj: MacrostratObject) -> None:
         "source": obj.description,
         "mime_type": mime_type,
         "sha256_hash": sha256_hash,
+        #
+        "object_group_id": object_group_id,
     }
 
-    logging.debug("Payload for API: %s", payload)
-    if object_id := get_macrostrat_object_id(obj):
+    logging.debug("Payload for objects API: %s", payload)
+    ids = get_macrostrat_object_ids(obj)
+    if object_id := ids[0] if ids else None:
         response = API.update_object(object_id, **payload)
     else:
         response = API.create_object(**payload)
-    new_object_id = response["id"]
-    logging.debug("Resulting object ID: %s", new_object_id)
-
-    # Create the entry in the `ingest_process` table.
-
-    payload = {
-        "object_id": new_object_id,
-    }
-
-    logging.debug("Payload for API: %s", payload)
-    if process_id := get_macrostrat_process_id(obj):
-        response = API.update_ingest_process(process_id, **payload)
-    else:
-        response = API.create_ingest_process(**payload)
-    new_process_id = response["id"]
-    logging.debug("Resulting ingest process ID: %s", new_process_id)
+    object_id = response["id"]
+    logging.debug("Resulting object ID: %s", object_id)
 
 
 def integrate_into_macrostrat(obj: MacrostratObject, slug_prefix: str) -> None:
@@ -296,12 +294,12 @@ def integrate_into_macrostrat(obj: MacrostratObject, slug_prefix: str) -> None:
             conn.execute(
                 """
                 UPDATE maps.sources
-                SET scale = 'large'
+                SET name = %s, scale = 'large'
                 WHERE source_id = %s
                 """,
-                (source_id,),
+                (obj.name, source_id),
             )
-        mark_process_as_completed(process_id)
+        mark_process_as_completed(process_id, source_id)
 
 
 # --------------------------------------------------------------------------
