@@ -3,6 +3,7 @@ Look for USGS geologic maps from the Nevada Bureau of Mines and Geology.
 """
 
 import hashlib
+import os.path
 
 import bs4
 import requests
@@ -19,8 +20,9 @@ def new_obj(origin: str, name: str) -> MacrostratObject:
 
     # Construct a short but unique "basename" for the object.
     filename = origin.split("/")[-1]
+    (root, ext) = os.path.splitext(filename)
     digest = hashlib.sha256(origin.encode("utf-8")).hexdigest()
-    basename = f"{filename}-{digest[:8]}"
+    basename = f"{root}-{digest[:8]}{ext}"
 
     return MacrostratObject(
         origin=origin,
