@@ -3,7 +3,6 @@ Integrate maps into Macrostrat.
 """
 
 import argparse
-import datetime
 import hashlib
 import json
 import logging
