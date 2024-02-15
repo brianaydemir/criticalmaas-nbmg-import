@@ -7,7 +7,7 @@ from typing import Optional
 
 import requests
 
-from macrostrat.criticalmaas import config
+from macrostrat.map_ingestion import config
 
 
 class GenericAPI:

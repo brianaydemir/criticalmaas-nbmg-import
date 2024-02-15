@@ -20,9 +20,9 @@ import minio
 import psycopg
 import requests
 
-from macrostrat.criticalmaas import config
-from macrostrat.criticalmaas.api import IngestAPI
-from macrostrat.criticalmaas.types import MacrostratObject
+from macrostrat.map_ingestion import config
+from macrostrat.map_ingestion.api import IngestAPI
+from macrostrat.map_ingestion.types import MacrostratObject
 
 API = IngestAPI(config.API_BASE_URL, config.API_TOKEN)
 

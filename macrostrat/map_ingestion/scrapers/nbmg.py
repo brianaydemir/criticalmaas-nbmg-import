@@ -8,8 +8,8 @@ import os.path
 import bs4
 import requests
 
-from macrostrat.criticalmaas import config
-from macrostrat.criticalmaas.types import MacrostratObject
+from macrostrat.map_ingestion import config
+from macrostrat.map_ingestion.types import MacrostratObject
 
 
 def new_obj(origin: str, name: str) -> MacrostratObject:
