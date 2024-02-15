@@ -4,7 +4,7 @@
 .PHONY: all build clean lint reformat
 
 PY_PACKAGE_SRC := macrostrat/
-PY_PACKAGE_NAME := macrostrat_nbmg_import
+PY_PACKAGE_NAME := macrostrat_map_ingestion
 
 all: reformat lint build
 

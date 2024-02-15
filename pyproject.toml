@@ -39,23 +39,20 @@ sqlite_cache = true
 
 
 [tool.poetry]
-name = "macrostrat_nbmg_import"
+name = "macrostrat.map_ingestion"
 version = "0.0.1"
-description = "Scripts for importing maps from NBMG"
+description = "Scripts for ingesting maps into Macrostrat"
 license = "Apache-2.0"
 authors = [
-    "Cannon Lock <clock@wisc.edu>",
     "Brian Aydemir <baydemir@morgridge.org>",
+    "Cannon Lock <clock@wisc.edu>",
 ]
 repository = "https://github.com/brianaydemir/criticalmaas-nbmg-import"
-packages = [{ include = "macrostrat/nbmg_import" }]
+packages = [{ include = "macrostrat" }]
 
 
 [tool.poetry.dependencies]
 python = "^3.11"
-aiofiles = "~23.2"
-aiohttp = "~3.9"
-anyio = "~4.2"
 beautifulsoup4 = "~4.12"
 minio = "~7.2"
 requests = "~2.31"
@@ -69,13 +66,12 @@ python-magic = "~0.4"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "~1.7"
-black = "~23.12"
+black = "~24.2"
 docutils = "~0.20"
 isort = "~5.13"
 mypy = "~1.8"
 pre-commit = "~3.6"
 pylint = "~3.0"
-safety = "~2.3"
 types-beautifulsoup4 = "~4.12"
 types-requests = "~2.31"
 
