@@ -57,7 +57,6 @@ beautifulsoup4 = "~4.12"
 minio = "~7.2"
 requests = "~2.31"
 psycopg = "~3.1"
-python-dotenv = "~1.0"
 python-magic = "~0.4"
 "macrostrat.cli" = { path = "vendor/macrostrat/cli", develop = true }
 "macrostrat.core" = { path = "vendor/macrostrat/core", develop = true }

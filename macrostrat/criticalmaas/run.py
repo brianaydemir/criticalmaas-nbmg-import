@@ -58,7 +58,7 @@ def get_macrostrat_object_ids(obj: MacrostratObject) -> Tuple[Optional[int], Opt
     Determine the ID of the object.
     """
     # FIXME: Use an API endpoint for this query.
-    with psycopg.connect(config.DB_CONN_URL) as conn:
+    with psycopg.connect(config.PG_DATABASE) as conn:
         record = conn.execute(
             """
             SELECT id, object_group_id
@@ -82,7 +82,7 @@ def get_macrostrat_process_id(obj: MacrostratObject) -> Optional[int]:
 
     if object_group_id := ids[1] if ids else None:
         # FIXME: Use an API endpoint for this query.
-        with psycopg.connect(config.DB_CONN_URL) as conn:
+        with psycopg.connect(config.PG_DATABASE) as conn:
             record = conn.execute(
                 """
                 SELECT id
@@ -101,7 +101,7 @@ def get_macrostrat_source_id(slug: str) -> Optional[int]:
     Determine the source ID for the given "slug".
     """
     # FIXME: Use an API endpoint for this query.
-    with psycopg.connect(config.DB_CONN_URL) as conn:
+    with psycopg.connect(config.PG_DATABASE) as conn:
         record = conn.execute(
             """
             SELECT source_id
@@ -249,7 +249,7 @@ def integrate_into_macrostrat(obj: MacrostratObject, slug_prefix: str) -> None:
         slug = f"{slug_prefix}_{slug_suffix}".lower()
 
         logging.debug("Using %s as the slug", slug)
-        logging.debug("Processing shape files: %s", shapefiles)
+        logging.debug("Processing files: %s", shapefiles)
 
         subprocess.run(
             ["macrostrat-maps", "ingest", slug, *shapefiles],
@@ -284,7 +284,7 @@ def integrate_into_macrostrat(obj: MacrostratObject, slug_prefix: str) -> None:
         )
         # FIXME: Use an API endpoint for this query.
         # FIXME: Do not hard-code the map scale.
-        with psycopg.connect(config.DB_CONN_URL) as conn:
+        with psycopg.connect(config.PG_DATABASE) as conn:
             conn.execute(
                 """
                 UPDATE maps.sources
