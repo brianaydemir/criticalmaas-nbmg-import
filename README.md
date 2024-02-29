@@ -45,7 +45,7 @@ Run the following:
     poetry run python3 -m macrostrat.map_ingestion.scrapers.${SCRAPER_MODULE} > 10-scraped-maps.txt
 
 Replace `${SCRAPER_MODULE}` with one of the modules in
-[macrostrat/map_ingestion/scrapers](macrostrat/map_ingestion/scrapers)
+[macrostrat/map_ingestion/scrapers](macrostrat/map_ingestion/scrapers).
 
 Each line in `10-scraped-mapes.txt` should be the JSON representation of
 a `MacrostratObject` describing a map to ingest.
