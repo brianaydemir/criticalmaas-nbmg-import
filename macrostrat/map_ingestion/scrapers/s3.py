@@ -5,20 +5,16 @@ Look for maps in one of Macrostrat's buckets.
 import datetime
 import hashlib
 import os.path
-import re
 import sys
 import urllib.parse
-from typing import Optional
 
-import bs4
 import minio
-import requests
 
 from macrostrat.map_ingestion import config
 from macrostrat.map_ingestion.types import MacrostratObject
 
 
-def new_obj(bucket: str, key: str) -> MacrostratObject:
+def new_obj(name_template: str, bucket: str, key: str) -> MacrostratObject:
     s3 = minio.Minio(
         config.S3_HOST,
         access_key=config.S3_ACCESS_KEY,
@@ -52,7 +48,7 @@ def new_obj(bucket: str, key: str) -> MacrostratObject:
         #
         local_file=config.DOWNLOAD_DIR / basename,
         #
-        name=f"CriticalMAAS 6-month Hackathon: {key}",
+        name=name_template.format(host=config.S3_HOST, bucket=bucket, key=key),
     )
 
 
@@ -61,8 +57,9 @@ def main() -> None:
     Look for GeoPackages in one of Macrostrat's buckets.
     """
 
-    bucket = sys.argv[1]
-    prefix = sys.argv[2]
+    name_template = sys.argv[1]
+    bucket = sys.argv[2]
+    prefix = sys.argv[3]
 
     s3 = minio.Minio(
         config.S3_HOST,
@@ -72,7 +69,7 @@ def main() -> None:
 
     for obj in s3.list_objects(bucket, prefix=prefix, recursive=True):
         if obj.object_name.endswith(".gpkg"):
-            print(new_obj(obj.bucket_name, obj.object_name))
+            print(new_obj(name_template, obj.bucket_name, obj.object_name))
 
 
 if __name__ == "__main__":

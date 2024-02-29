@@ -124,14 +124,6 @@ class IngestAPI(GenericAPI):
         self._api_token = api_token
 
     def _request(self, method: str, url: str, **kwargs) -> requests.Response:
-        """
-        Log and send an HTTP request.
-
-        Keyword arguments are passed through unmodified to the `requests`
-        library's `request` method. If the response contains an error
-        status code, the response is still returned. Other failures result
-        in an exception being raised.
-        """
         if "headers" not in kwargs:
             kwargs["headers"] = {}
         if "authorization" not in kwargs["headers"]:

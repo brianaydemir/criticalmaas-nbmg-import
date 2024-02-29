@@ -54,13 +54,6 @@ def new_obj(
     )
 
 
-def is_valid_url(url: str) -> bool:
-    """
-    Return whether the given URL is one that we are interested in downloading.
-    """
-    return url.startswith("https://data.nbmg.unr.edu/Public/") and url.endswith(".zip")
-
-
 def main() -> None:
     """
     Read in a CSV file from the USGS, and print any resulting objects.
@@ -89,7 +82,8 @@ def main() -> None:
 
             for span in soup.find_all("span"):
                 if span.text.startswith("Title:"):
-                    title = re.match(r"(\s*)Title:(.*)", span.text).group(2).strip()
+                    if match := re.match(r"(\s*)Title:(.*)", span.text):
+                        title = match.group(2).strip()
 
             for link in soup.find_all("a"):
                 if link.text.startswith("Shapefile version"):

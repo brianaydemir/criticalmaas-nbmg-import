@@ -6,14 +6,14 @@ import argparse
 import hashlib
 import json
 import logging
-import os
 import pathlib
 import re
 import shutil
+import sqlite3
 import subprocess
 import sys
 import zipfile
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 import magic
 import minio
@@ -53,9 +53,9 @@ def get_macrostrat_objects(file: Optional[pathlib.Path]) -> list[MacrostratObjec
     return objs
 
 
-def get_macrostrat_object_ids(obj: MacrostratObject) -> Tuple[Optional[int], Optional[int]]:
+def get_macrostrat_object_ids(obj: MacrostratObject) -> Optional[tuple[int, int]]:
     """
-    Determine the ID of the object.
+    Determine the ID and associated group ID of the object.
     """
     # FIXME: Use an API endpoint for this query.
     with psycopg.connect(config.PG_DATABASE) as conn:
@@ -125,7 +125,7 @@ def is_process_completed(id_: int) -> bool:
     """
     Determine whether the ingest process ID has been marked as "completed."
     """
-    return API.get_ingest_process(id_)["state"] == "ingested"
+    return bool(API.get_ingest_process(id_)["state"] == "ingested")
 
 
 def mark_process_as_completed(id_: int, source_id: int) -> None:
@@ -165,7 +165,7 @@ def upload_to_s3(obj: MacrostratObject) -> None:
     )
 
     logging.debug("Uploading %s to S3 (%s/%s)", obj.local_file, obj.bucket, obj.key)
-    s3.fput_object(obj.bucket, obj.key, os.fspath(obj.local_file))
+    s3.fput_object(obj.bucket, obj.key, str(obj.local_file))
 
 
 def register_in_macrostrat(obj: MacrostratObject) -> None:
@@ -228,18 +228,50 @@ def integrate_into_macrostrat(obj: MacrostratObject, slug_prefix: str) -> None:
         return
 
     #
-    # Explode the local file so that we can locate shape files to ingest.
+    # Determine what to ingest from the local file.
     #
 
-    extracted_zip_dir = obj.local_file.parent / (obj.local_file.name + "-extracted")
-    shutil.rmtree(extracted_zip_dir, ignore_errors=True)
+    shapefiles = None
 
-    logging.debug("Extracting %s into %s", obj.local_file, extracted_zip_dir)
+    if obj.local_file.name.endswith(".zip"):
+        extracted_zip_dir = obj.local_file.parent / (obj.local_file.name + "-extracted")
+        shutil.rmtree(extracted_zip_dir, ignore_errors=True)
 
-    with zipfile.ZipFile(obj.local_file) as zf:
-        zf.extractall(path=extracted_zip_dir)
+        logging.debug("Extracting %s into %s", obj.local_file, extracted_zip_dir)
 
-    if shapefiles := [str(p) for p in extracted_zip_dir.glob("**/*.shp")]:
+        with zipfile.ZipFile(obj.local_file) as zf:
+            zf.extractall(path=extracted_zip_dir)
+        shapefiles = [str(p) for p in extracted_zip_dir.glob("**/*.shp")]
+
+    elif obj.local_file.name.endswith(".gpkg"):
+        # FIXME: Do not assume that the geopackage works as-is.
+        shapefiles = [str(obj.local_file)]
+
+        #
+        # NOTE: The mangling below is specific to TA1's hackathon output.
+        #
+
+        # mangled_gpkg = str(obj.local_file) + ".new.sqlite"
+
+        # shutil.copy(obj.local_file, mangled_gpkg)
+
+        # with sqlite3.connect(mangled_gpkg) as con:
+        #     for row in con.execute("SELECT table_name FROM gpkg_contents"):
+        #         table_name = row[0]
+        #         label = " ".join(table_name.split("_")[2:-1])
+        #         print(row, label)
+
+        #         e_table_name = table_name.replace('"', '""')
+
+        #         con.enable_load_extension(True)
+        #         con.execute('SELECT load_extension("mod_spatialite");')
+        #         con.execute(f'ALTER TABLE "{e_table_name}" ADD label TEXT')
+        #         con.execute(f'UPDATE "{e_table_name}" SET label = ?', (label,))
+        #         con.commit()
+
+        # shapefiles = [mangled_gpkg]
+
+    if shapefiles:
         #
         # Assuming the object's local filename is unique(-ish), use it
         # to generate a unique source ID for the ingestion scripts.
