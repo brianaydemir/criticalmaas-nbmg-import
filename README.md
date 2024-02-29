@@ -1,14 +1,16 @@
-# criticalmaas-nbmg-import
+# macrostrat-map-ingestion
 
-Scripts for importing maps from NBMG
+Scripts for ingesting maps into Macrostrat
+
+NOTE: Everything here should be viewed as a proof-of-concept.
 
 
 ## Overview of the process
 
 The import process can be divided into two phases:
 
-1. Scraping NBMG's website. This is inherently a task that cannot be
-   generalized to work across multiple map repositories.
+1. "Scraping" some data source for potential maps of interest. This is
+   a task that cannot be generalized across multiple data sources.
 
 2. Using the data obtained in the previous step to populate data into
    Macrostrat's database and object store. This task can be generalized to
@@ -31,16 +33,21 @@ text files containing JSON-serialized
 
        poetry install --sync
 
-4. Copy [`.env.template`](.env.template) to `.env`, and set all the keys.
+4. Copy [`macrostrat.toml.template`](macrostrat.toml.template) to
+   `macrostrat.toml`, copy the `example` section, and set each key to an
+   appropriate value.
 
 
-## Step 1: Scraping NBMG's website
+## Step 1: Scraping a data source
 
 Run the following:
 
-    poetry run python3 -m macrostrat.criticalmaas.scrapers.nbmg > 10-scraped-maps.txt
+    poetry run python3 -m macrostrat.criticalmaas.scrapers.${SCRAPER_MODULE} > 10-scraped-maps.txt
 
-Each line in `00-scraped-objects.txt` should be the JSON representation of
+Replace `${SCRAPER_MODULE}` with one of the modules in
+[macrostrat/criticalmaas/scrapers](macrostrat/criticalmaas/scrapers)
+
+Each line in `10-scraped-mapes.txt` should be the JSON representation of
 a `MacrostratObject` describing a map to ingest.
 
 
