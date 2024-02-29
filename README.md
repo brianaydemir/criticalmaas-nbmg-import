@@ -14,11 +14,11 @@ The import process can be divided into two phases:
 
 2. Using the data obtained in the previous step to populate data into
    Macrostrat's database and object store. This task can be generalized to
-   work across multiple map repositories.
+   work across multiple data sources.
 
 The scripts in this repository generally take as input and produce as output
 text files containing JSON-serialized
-[`MacrostratObject`](macrostrat/criticalmaas/types.py)s, one object per line.
+[`MacrostratObject`](macrostrat/map_ingestion/types.py)s, one object per line.
 
 
 ## Step 0: Initial set up and configuration
@@ -42,10 +42,10 @@ text files containing JSON-serialized
 
 Run the following:
 
-    poetry run python3 -m macrostrat.criticalmaas.scrapers.${SCRAPER_MODULE} > 10-scraped-maps.txt
+    poetry run python3 -m macrostrat.map_ingestion.scrapers.${SCRAPER_MODULE} > 10-scraped-maps.txt
 
 Replace `${SCRAPER_MODULE}` with one of the modules in
-[macrostrat/criticalmaas/scrapers](macrostrat/criticalmaas/scrapers)
+[macrostrat/map_ingestion/scrapers](macrostrat/map_ingestion/scrapers)
 
 Each line in `10-scraped-mapes.txt` should be the JSON representation of
 a `MacrostratObject` describing a map to ingest.
@@ -55,7 +55,7 @@ a `MacrostratObject` describing a map to ingest.
 
 Run the following:
 
-    poetry run python3 -m macrostrat.criticalmaas.run --verbose download \
+    poetry run python3 -m macrostrat.map_ingestion.run --verbose download \
         --input 10-scraped-maps.txt \
         --output 20-downloaded-maps.txt \
         --error 99-errors.txt
@@ -76,7 +76,7 @@ This step and the ones below all follow the same basic structure:
 
 Run the following:
 
-    poetry run python3 -m macrostrat.criticalmaas.run --verbose register \
+    poetry run python3 -m macrostrat.map_ingestion.run --verbose register \
         --input 20-downloaded-maps.txt \
         --output 30-registered-maps.txt \
         --error 99-errors.txt
@@ -87,7 +87,7 @@ Run the following:
 Run the following after replacing `${SOURCE_ID_PREFIX}` with an appropriate
 value:
 
-    poetry run python3 -m macrostrat.criticalmaas.run --verbose integrate \
+    poetry run python3 -m macrostrat.map_ingestion.run --verbose integrate \
         --input 30-registered-maps.txt \
         --output 40-integrated-maps.txt \
         --error 99-errors.txt \
