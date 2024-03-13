@@ -13,8 +13,8 @@ from typing import Optional
 import bs4
 import requests
 
-from macrostrat.map_ingestion import config
-from macrostrat.map_ingestion.types import MacrostratObject
+from macrostrat.criticalmaas import config
+from macrostrat.criticalmaas.types import MacrostratObject
 
 
 def new_obj(

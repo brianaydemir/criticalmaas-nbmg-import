@@ -10,8 +10,8 @@ import urllib.parse
 
 import minio
 
-from macrostrat.map_ingestion import config
-from macrostrat.map_ingestion.types import MacrostratObject
+from macrostrat.criticalmaas import config
+from macrostrat.criticalmaas.types import MacrostratObject
 
 
 def new_obj(name_template: str, bucket: str, key: str) -> MacrostratObject:
