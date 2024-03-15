@@ -44,6 +44,7 @@ for the implementation of `run-pipeline`.
    Replace `${SCRAPER_MODULE}` with one of the modules in
    [macrostrat/map_ingestion/scrapers](macrostrat/map_ingestion/scrapers).
 
-2. Process the maps listed in CSV file produced in the previous step by running
+2. Process the maps listed in the CSV file produced by the previous step by
+   running
 
        poetry run python3 -m macrostrat.map_ingestion.driver maps.csv
