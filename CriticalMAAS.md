@@ -17,23 +17,6 @@ text files containing JSON-serialized
 [`MacrostratObject`](macrostrat/criticalmaas/types.py)s, one object per line.
 
 
-## Step 0: Initial set up and configuration
-
-1. Install [Poetry](https://python-poetry.org/).
-
-2. Tell Poetry which Python 3.11+ installation to use for this project's environment.
-
-       poetry env use /usr/bin/python3.11
-
-3. Install dependencies.
-
-       poetry install --sync
-
-4. Copy [`macrostrat.toml.template`](macrostrat.toml.template) to
-   `macrostrat.toml`, copy the `example` section, and set each key to an
-   appropriate value.
-
-
 ## Step 1: Scraping a data source
 
 Run the following:
