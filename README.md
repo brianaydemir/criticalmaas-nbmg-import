@@ -1,5 +1,8 @@
 # macrostrat-map-ingestion
 
+> These scripts have been moved to
+> [UW-Macrostrat/macrostrat](https://github.com/UW-Macrostrat/macrostrat).
+
 Scripts for ingesting maps into Macrostrat
 
 NOTE: Everything here should be viewed as a proof-of-concept.
