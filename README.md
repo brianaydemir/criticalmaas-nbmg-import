@@ -81,10 +81,9 @@ The resulting output is in [data/ngmdb.csv](data/ngmdb.csv).
 
     poetry run python3 macrostrat/map_ingestion/alaska.py
 
-The resulting output is in [data/alaska_all.csv](data/alaska_all.csv). It
-turns out that a few of these maps in that list pose problems for
-Macrostrat's ingestion pipeline. Deleting the corresponding rows yields
-[data/alaska.csv](data/alaska.csv).
+The resulting output is in [data/alaska_all.csv](data/alaska_all.csv).
+Several of these maps pose problems for Macrostrat's ingestion pipeline.
+Deleting the corresponding rows yields [data/alaska.csv](data/alaska.csv).
 
 When running `macrostrat maps ingest-from-csv`, the `--filter alaska` option
 can be used to attempt to parse additional metadata from the files contained
