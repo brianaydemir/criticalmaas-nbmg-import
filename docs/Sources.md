@@ -1,5 +1,8 @@
-Data Sources
-============
+Potential Data Sources
+======================
+
+This file lists out potential data sources and what it might take to scrape
+or otherwise acquire new maps from them.
 
 
 United States - Wisconsin

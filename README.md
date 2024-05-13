@@ -1,11 +1,18 @@
 # macrostrat-map-ingestion
 
-> These scripts have been moved to
-> [UW-Macrostrat/macrostrat](https://github.com/UW-Macrostrat/macrostrat).
-
 Scripts for ingesting maps into Macrostrat
 
-NOTE: Everything here should be viewed as a proof-of-concept.
+
+## CriticalMAAS 6-month Hackathon
+
+The map ingestion code written for TA4 tasks at the 6-month hackathon has
+been re-packaged into the following commands of the Macrostrat CLI:
+
+* `macrostrat maps ingest-file`
+* `macrostrat maps ingest-from-csv`
+
+See [UW-Macrostrat/macrostrat/map-integration](https://github.com/UW-Macrostrat/macrostrat/map-integration)
+for the implementation of these commands.
 
 
 ## Basic Setup and Configuration
@@ -25,29 +32,18 @@ NOTE: Everything here should be viewed as a proof-of-concept.
    appropriate value.
 
 
-## CriticalMAAS 6-month Hackathon
-
-The `macrostrat.criticalmaas` package was written to support TA4 tasks.
-
-See [CriticalMAAS.md](CriticalMAAS.md) for additional details.
-
-
 ## CLI-based Bulk Ingest of Maps
 
-The `macrostrat.map_ingestion` package was written to support bulk ingest
-of maps using the `macrostrat maps run-pipeline` command.
+The import process can be divided into two phases:
 
-See [UW-Macrostrat/macrostrat](https://github.com/UW-Macrostrat/macrostrat)
-for the implementation of `run-pipeline`.
+1. Scraping some data source for potential maps of interest. This is a task
+   that cannot be generalized across multiple data sources.
 
-1. Scrape a data source by running
+2. Using the data obtained in the previous step to populate data into
+   Macrostrat's database and object store. This task can be generalized to
+   work across multiple data sources.
 
-       poetry run python3 -m macrostrat.map_ingestion.scrapers.${SCRAPER_MODULE} > maps.csv
-
-   Replace `${SCRAPER_MODULE}` with one of the modules in
-   [macrostrat/map_ingestion/scrapers](macrostrat/map_ingestion/scrapers).
-
-2. Process the maps listed in the CSV file produced by the previous step by
-   running
-
-       poetry run python3 -m macrostrat.map_ingestion.driver maps.csv
+The scripts in the [`macrostrat.map_ingestion`](macrostrat/map_ingestion)
+package address the first of these two steps. Each script outputs a CSV file
+that can be fed into `macrostrat maps ingest-from-csv`, which addresses the
+second of these two steps.
