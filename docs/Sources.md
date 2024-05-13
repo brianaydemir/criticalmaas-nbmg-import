@@ -5,8 +5,8 @@ This file lists out potential data sources and what it might take to scrape
 or otherwise acquire new maps from them.
 
 
-United States - Wisconsin
--------------------------
+Wisconsin
+---------
 
 [On the web.](https://wgnhs.wisc.edu/catalog/publication?res_extras_element_type=Map&tags=Bedrock+Geology)
 
