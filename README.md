@@ -3,7 +3,7 @@
 Scripts for ingesting maps into Macrostrat
 
 
-## CriticalMAAS 6-month Hackathon
+## CriticalMAAS
 
 The map ingestion code written for TA4 tasks at the 6-month hackathon has
 been re-packaged into the following commands of the Macrostrat CLI:
@@ -19,11 +19,11 @@ for the implementation of these commands.
 
 1. Install [Poetry](https://python-poetry.org/).
 
-2. Tell Poetry which Python 3.11+ installation to use for this project's environment.
+2. Set the Python 3.11+ installation:
 
        poetry env use /usr/bin/python3.11
 
-3. Install dependencies.
+3. Install dependencies:
 
        poetry install --sync
 
@@ -51,37 +51,44 @@ second of these two steps.
 
 ## Examples
 
-Each example below describes how to "scrape" a data source and produce a CSV
+Each example below describes how to scrape a data source and produce a CSV
 file for the `macrostrat maps ingest-file` command.
 
 
 ### CriticalMAAS 9 Month Hackathon
 
+The input CSV file here was provided by the CriticalMAAS program.
+
     poetry run python3 macrostrat/map_ingestion/criticalmaas_09.py data/criticalmaas_09_all.csv
 
 The resulting output is in [data/criticalmaas_09.csv](data/criticalmaas_09.csv).
 
-The input CSV file was provided by the CriticalMAAS program.
+When running `macrostrat maps ingest-from-csv`, the `--filter ta1` option
+can be used to attempt to exclude bounding boxes and map legends.
 
 
-### National Geologic Map Database (NGMDB)
+### National Geologic Map Database
+
+The input CSV file here was provided by the USGS and flags NGMDB products of
+interest to the CriticalMAAS program.
 
     poetry run python3 macrostrat/map_ingestion/ngmdb.py data/ngmdb_usgs_records_all.csv
 
 The resulting output is in [data/ngmdb.csv](data/ngmdb.csv).
-
-The input CSV file was provided by the USGS and flags NGMDB products of
-interest to the CriticalMAAS program.
 
 
 ### Alaska Division of Geological & Geophysical Surveys
 
     poetry run python3 macrostrat/map_ingestion/alaska.py
 
-The resulting output is in [data/alaska_all.csv](data/alaska_all.csv).
+The resulting output is in [data/alaska_all.csv](data/alaska_all.csv). It
+turns out that a few of these maps in that list pose problems for
+Macrostrat's ingestion pipeline. Deleting the corresponding rows yields
+[data/alaska.csv](data/alaska.csv).
 
-NOTE: Several rows describing maps that are problematic for Macrostrat's
-ingestion pipeline were deleted, yielding [data/alaska.csv](data/alaska.csv).
+When running `macrostrat maps ingest-from-csv`, the `--filter alaska` option
+can be used to attempt to parse additional metadata from the files contained
+in each archive.
 
 
 ### Nevada Bureau of Mines and Geology
