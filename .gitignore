@@ -8,6 +8,5 @@
 /dist/
 
 ## Various artifacts from the map ingestion process.
-/.env
 /macrostrat.toml
 /tmp/

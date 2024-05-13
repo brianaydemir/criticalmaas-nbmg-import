@@ -54,10 +54,8 @@ packages = [{ include = "macrostrat" }]
 [tool.poetry.dependencies]
 python = "^3.11"
 beautifulsoup4 = "~4.12"
-minio = "~7.2"
 requests = "~2.31"
-psycopg = "~3.1"
-python-magic = "~0.4"
+
 "macrostrat.cli" = { path = "vendor/macrostrat/cli", develop = true }
 "macrostrat.core" = { path = "vendor/macrostrat/core", develop = true }
 "macrostrat.map_integration" = { path = "vendor/macrostrat/map-integration", develop = true }
@@ -65,11 +63,11 @@ python-magic = "~0.4"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "~1.7"
-black = "~24.2"
-docutils = "~0.20"
+black = "~24.4"
+docutils = "~0.21"
 isort = "~5.13"
-mypy = "~1.8"
-pre-commit = "~3.6"
+mypy = "~1.10"
+pre-commit = "~3.7"
 pylint = "~3.1"
 types-beautifulsoup4 = "~4.12"
 types-requests = "~2.31"
