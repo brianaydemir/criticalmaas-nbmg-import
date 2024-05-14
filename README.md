@@ -2,6 +2,8 @@
 
 Scripts for ingesting maps into Macrostrat
 
+> NOTE: These scripts are now a part of [UW-Macrostrat/macrostrat](https://github.com/UW-Macrostrat/macrostrat).
+
 
 ## CriticalMAAS
 
